@@ -35,6 +35,7 @@ include_directories(
    ${PCRE_INCLUDE_DIR}
    ${MYSQL_INCLUDE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_SOURCE_DIR}/dep/asio/include
 )
 
 link_directories(${EXTRA_LIBS_PATH} ${DEPENDENCY_LIBS})
