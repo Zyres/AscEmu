@@ -71,7 +71,11 @@ namespace AENetwork
     {};
 
     struct CmsgAuthRequest
-    {};
+    {
+        uint32_t random;
+        uint8_t key;
+        std::string text;
+    };
 
     struct SmsgAuthResponse
     {};

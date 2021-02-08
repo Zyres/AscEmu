@@ -112,10 +112,10 @@ namespace AENetwork
                     std::cout << "[" << client->getId() << "]: Auth Request\n";
                     //read packet <<
 
-                    AuthRequest ar;
+                    CmsgAuthRequest ar;
                     packet >> ar;
 
-                    std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << "\n";
+                    std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << " Text: " << ar.text << "\n";
 
                     // ckeck security
 

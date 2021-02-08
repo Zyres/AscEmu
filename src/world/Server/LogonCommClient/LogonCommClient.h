@@ -93,7 +93,7 @@ namespace AENetwork
             Packet<LogonCommTypes> packet;
             packet.header.id = LogonCommTypes::CMSG_AUTH_REQUEST;
 
-            AuthRequest ar{ 25778 , 5};
+            CmsgAuthRequest ar{ 25778 , 5, "Some text example"};
 
             packet << ar;
             sendPacket(packet);
