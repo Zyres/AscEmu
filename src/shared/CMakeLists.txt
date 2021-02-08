@@ -98,6 +98,13 @@ set(headers
     Threading/AEThread.h
     Threading/AEThreadPool.h
     Threading/ThreadState.h
+	
+	AENetwork/AENetworkClientInterface.hpp
+	AENetwork/AENetworkCommon.hpp
+	AENetwork/AENetworkConnection.hpp
+	AENetwork/AENetworkPacket.hpp
+	AENetwork/AENetworkServerInterface.hpp
+	AENetwork/AENetworkThreadsafeQueue.hpp
     
     Common.hpp
     Log.hpp
@@ -119,6 +126,7 @@ include_directories(
     ${MYSQL_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/dep/utf8cpp
+	${CMAKE_SOURCE_DIR}/dep/asio/include
 )
 
 add_library(${PROJECT_NAME} STATIC ${sources} ${headers})

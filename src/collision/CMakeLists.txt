@@ -25,6 +25,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/Maps
   ${CMAKE_CURRENT_SOURCE_DIR}/Models
   ${ZLIB_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/dep/asio/include
 )
 
 add_library(collision STATIC ${collision_STAT_SRCS})

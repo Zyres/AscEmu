@@ -53,6 +53,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${ZLIB_INCLUDE_DIRS}
    ${CMAKE_SOURCE_DIR}/dep/utf8cpp
+   ${CMAKE_SOURCE_DIR}/dep/asio/include
 )
 
 add_library(${PROJECT_NAME} SHARED ${SRCS} ${HEADERS})

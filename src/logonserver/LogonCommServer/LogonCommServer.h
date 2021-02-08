@@ -68,4 +68,71 @@ class LogonCommServerSocket : public Socket
 
 typedef void (LogonCommServerSocket::*logonpacket_handler)(WorldPacket&);
 
+//MIT
+namespace AENetwork
+{
+    class LogonCommServer : public ServerInterface<LogonCommTypes>
+    {
+    public:
+        LogonCommServer(uint16_t port) : ServerInterface<LogonCommTypes>(port)
+        {
+
+        }
+
+    protected:
+        //called when client connects, we can refuse the connection
+        virtual bool onClientConnect(std::shared_ptr<Connection<LogonCommTypes>> client)
+        {
+            // banned ip...
+            return true;
+        }
+
+        // called when a client appears to have disconnected
+        virtual void onClientDisconnect(std::shared_ptr<Connection<LogonCommTypes>> client)
+        {
+            std::cout << "Removing client [" << client->getId() << "]\n";
+        }
+
+        //called when a packet arrives
+        virtual void onMessage(std::shared_ptr<Connection<LogonCommTypes>> client, Packet<LogonCommTypes>& packet)
+        {
+            std::cout << "[SERVER] OnMessage called!\n";
+
+            if (!client->isClientAuthorized())
+                std::cout << "[SERVER] client ["<< client->getId() <<"] is not authorized!\n";
+
+            switch (packet.header.id)
+            {
+                case LogonCommTypes::CMSG_REALM_REGISTER_REQUEST:
+                {
+                    std::cout << "[" << client->getId() << "]: Auth Register Request\n";
+                } break;
+                case LogonCommTypes::CMSG_AUTH_REQUEST:
+                {
+                    std::cout << "[" << client->getId() << "]: Auth Request\n";
+                    //read packet <<
+
+                    AuthRequest ar;
+                    packet >> ar;
+
+                    std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << "\n";
+
+                    // ckeck security
+
+                    // create new packet
+                    AENetwork::Packet<AENetwork::LogonCommTypes> packetOut;
+                    packetOut.header.id = AENetwork::LogonCommTypes::SMSG_AUTH_RESPONSE;
+                    packetOut << uint32_t(1);
+                    client->sendPacket(packetOut);
+                } break;
+            default:
+            {
+                // unknown packet opcode/header.id, disconnect!
+                client->disconnect();
+            } break;
+            }
+        }
+    };
+}
+
 #endif  // __LOGON_COMM_SERVER_H

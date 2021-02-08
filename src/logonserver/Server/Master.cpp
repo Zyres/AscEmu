@@ -93,6 +93,9 @@ void MasterLogon::Run(int /*argc*/, char** /*argv*/)
     auto realmlistSocket = new ListenSocket<AuthSocket>(logonConfig.listen.host.c_str(), logonConfig.listen.realmListPort);
     auto logonServerSocket = new ListenSocket<LogonCommServerSocket>(logonConfig.listen.interServerHost.c_str(), logonConfig.listen.port);
 
+    AENetwork::LogonCommServer commServer(8180);
+    commServer.startServer();
+
     sSocketMgr.SpawnWorkerThreads();
 
     // Spawn auth listener
@@ -114,6 +117,8 @@ void MasterLogon::Run(int /*argc*/, char** /*argv*/)
         LogDefault("Success! Ready for connections");
         while (mrunning)
         {
+            commServer.update(-1, true);
+
             if (!(++loop_counter % 20))             // 20 seconds
                 CheckForDeadSockets();
 

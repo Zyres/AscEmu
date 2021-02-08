@@ -150,6 +150,7 @@ include_directories(
    ${CMAKE_SOURCE_DIR}/src
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${ZLIB_INCLUDE_DIRS}
+   ${CMAKE_SOURCE_DIR}/dep/asio/include
 )
 
 add_executable(${PROJECT_NAME} ${sources})

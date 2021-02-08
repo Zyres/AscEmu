@@ -41,6 +41,14 @@
 #include "../shared/Auth/Sha1.h"
 #include "../shared/Auth/WowCrypt.hpp"
 
+#include <AENetwork/AENetworkClientInterface.hpp>
+#include <AENetwork/AENetworkConnection.hpp>
+#include <AENetwork/AENetworkPacket.hpp>
+#include <AENetwork/AENetworkServerInterface.hpp>
+#include <AENetwork/AENetworkCommon.hpp>
+#include <AENetwork/AENetworkThreadsafeQueue.hpp>
+
+
 #include "../world/Server/Opcodes.hpp"
 #include "LogonConf.h"
 #include "Server/AccountMgr.h"

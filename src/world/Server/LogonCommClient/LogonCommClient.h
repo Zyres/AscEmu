@@ -29,6 +29,13 @@
 #include <RC4Engine.h>
 #include "zlib.h"
 
+#include <AENetwork/AENetworkClientInterface.hpp>
+#include <AENetwork/AENetworkConnection.hpp>
+#include <AENetwork/AENetworkPacket.hpp>
+#include <AENetwork/AENetworkServerInterface.hpp>
+#include <AENetwork/AENetworkCommon.hpp>
+#include <AENetwork/AENetworkThreadsafeQueue.hpp>
+
 class LogonCommClientSocket : public Socket
 {
     uint32 remaining;
@@ -74,5 +81,24 @@ class LogonCommClientSocket : public Socket
 };
 
 typedef void (LogonCommClientSocket::*logonpacket_handler)(WorldPacket&);
+
+// MIT
+namespace AENetwork
+{
+    class LogonCommClient : public ClientInterface<LogonCommTypes>
+    {
+    public:
+        void sendAuth()
+        {
+            Packet<LogonCommTypes> packet;
+            packet.header.id = LogonCommTypes::CMSG_AUTH_REQUEST;
+
+            AuthRequest ar{ 25778 , 5};
+
+            packet << ar;
+            sendPacket(packet);
+        }
+    };
+}
 
 #endif // LOGON_COMM_CLIENT_H
