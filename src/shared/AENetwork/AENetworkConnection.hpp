@@ -214,7 +214,7 @@ namespace AENetwork
             std::cout << "addToIncomingPacketQueue: new packet for: " << (m_ConnectionOwnerType == ConnectionOwner::Server ? "SERVER" : "CLIENT") << " Size: " << m_packetsTempIn.size() << "\n";
 
             // complete packet received, now turn the order of the packet body
-            std::reverse(m_packetsTempIn.body.begin(), m_packetsTempIn.body.end());
+            //std::reverse(m_packetsTempIn.body.begin(), m_packetsTempIn.body.end());
 
             if (m_ConnectionOwnerType == ConnectionOwner::Server)
                 m_queuePacketsIn.push_back({ this->shared_from_this(), m_packetsTempIn });

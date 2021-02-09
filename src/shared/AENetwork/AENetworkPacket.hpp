@@ -29,6 +29,8 @@ namespace AENetwork
             return body.size();
         }
 
+        size_t readPosition = 0;
+
         //pushing datatypes to vector
         friend void write(Packet<T>& packet, const uint8_t* src, size_t cnt)
         {
@@ -96,16 +98,17 @@ namespace AENetwork
             static_assert(std::is_standard_layout<DataType>::value, "Data can not be pulled from a vector!");
 
             // cache location towards the end of the vector where the pulled data starts
-            size_t i = packet.body.size() - sizeof(DataType);
+            size_t i = packet.body.size();// -sizeof(DataType);
 
             // copy the data from the vector into user variable
-            std::memcpy(&data, packet.body.data() + i, sizeof(DataType));
+            std::memcpy(&data, packet.body.data() + packet.readPosition, sizeof(DataType));
 
             //resize the vector, we have the data (read bytes) and reset end position
-            packet.body.resize(i);
+            //packet.body.resize(i);
+            packet.readPosition += sizeof(DataType);
 
             // update size of our header
-            packet.header.size = static_cast<uint32_t>(packet.size());
+            //packet.header.size = static_cast<uint32_t>(packet.size());
 
             return data;
         }
