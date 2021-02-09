@@ -29,28 +29,30 @@ namespace AENetwork
             return body.size();
         }
 
-        size_t readPosition = 0;
-
+        //////////////////////////////////////////////////////////////////////////////////////////
         //pushing datatypes to vector
-        friend void write(Packet<T>& packet, const uint8_t* src, size_t cnt)
+
+        // write special types to vector - user for chars
+        friend void write(Packet<T>& packet, const uint8_t* dataSource, size_t dataSize)
         {
-            if (!cnt)
+            if (!dataSize)
                 return;
 
-            if (!src)
+            if (!dataSource)
                 return;
 
             size_t i = packet.body.size();
 
-            packet.body.resize(packet.body.size() + cnt);
+            packet.body.resize(packet.body.size() + dataSize);
 
-            std::memcpy(packet.body.data() + i, src, cnt);
+            std::memcpy(packet.body.data() + i, dataSource, dataSize);
 
             packet.header.size = static_cast<uint32_t>(packet.size());
         }
 
+        // template function to write basic dataTypes to vector
         template<typename DataType>
-        friend DataType write(Packet<T>& packet, const DataType& data)
+        friend void write(Packet<T>& packet, const DataType& data)
         {
             // check if the type of data is trivial copyable
             static_assert(std::is_standard_layout<DataType>::value, "Data can not be pushed into a vector!");
@@ -67,20 +69,24 @@ namespace AENetwork
 
             // update size of our header
             packet.header.size = static_cast<uint32_t>(packet.size());
-
-            return data;
         }
 
-        friend Packet<T>& operator << (Packet<T>& packet, const std::string& data)
+        // handle basic types
+        friend Packet<T>& operator << (Packet<T>& packet, const bool& data)
         {
-            write(packet, (uint8_t*)data.c_str(), data.length());
-            write<uint8_t>(packet, static_cast<uint8_t>(0));
+            write<char>(packet, static_cast<char>(data));
             return packet;
         }
 
-        friend Packet<T>& operator << (Packet<T>& packet, const uint32_t& data)
+        friend Packet<T>& operator << (Packet<T>& packet, const float& data)
         {
-            write<uint32_t>(packet, data);
+            write<float>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const double& data)
+        {
+            write<double>(packet, data);
             return packet;
         }
 
@@ -90,48 +96,102 @@ namespace AENetwork
             return packet;
         }
 
-        //pulling data fromt he vector
+        friend Packet<T>& operator << (Packet<T>& packet, const uint16_t& data)
+        {
+            write<uint16_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const uint32_t& data)
+        {
+            write<uint32_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const uint64_t& data)
+        {
+            write<uint64_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const int8_t& data)
+        {
+            write<int8_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const int16_t& data)
+        {
+            write<int16_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const int32_t& data)
+        {
+            write<int32_t>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator << (Packet<T>& packet, const int64_t& data)
+        {
+            write<int64_t>(packet, data);
+            return packet;
+        }
+
+        // handle special types
+        friend Packet<T>& operator << (Packet<T>& packet, const std::string& data)
+        {
+            write(packet, reinterpret_cast<const uint8_t*>(data.c_str()), data.length());
+
+            //add 0 to the end of the vector string bytes so we can find the end of the string when we read it.
+            write<uint8_t>(packet, static_cast<uint8_t>(0));
+            return packet;
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //pulling data from he vector
+
+        //template function to read basic dataTypes
         template <typename DataType>
-        friend DataType read(Packet<T>& packet, DataType& data)
+        friend void read(Packet<T>& packet, DataType& data)
         {
             // check if the type of data is trivial copyable
             static_assert(std::is_standard_layout<DataType>::value, "Data can not be pulled from a vector!");
 
             // cache location towards the end of the vector where the pulled data starts
-            size_t i = packet.body.size();// -sizeof(DataType);
+            const size_t i = packet.body.size() -sizeof(DataType);
 
             // copy the data from the vector into user variable
-            std::memcpy(&data, packet.body.data() + packet.readPosition, sizeof(DataType));
+            std::memcpy(&data, packet.body.data(), sizeof(DataType));
 
-            //resize the vector, we have the data (read bytes) and reset end position
-            //packet.body.resize(i);
-            packet.readPosition += sizeof(DataType);
+            //move n elements to the end
+            std::rotate(packet.body.begin(), packet.body.begin() + sizeof(DataType), packet.body.end());
+
+            //resize the vector, we have the data and n elements gets removed at the end of the vector
+            packet.body.resize(i);
 
             // update size of our header
-            //packet.header.size = static_cast<uint32_t>(packet.size());
-
-            return data;
+            packet.header.size = static_cast<uint32_t>(packet.size());
         }
 
-        friend Packet<T>& operator >> (Packet<T>& packet, std::string& data)
+        // handle basic types
+        friend Packet<T>& operator >> (Packet<T>& packet, bool& data)
         {
-            data.clear();
-
-            while (true)
-            {
-                char c;
-                read<char>(packet, c);
-                if (c == 0)
-                    break;
-                data += c;
-            }
-
+            char singleCharacter;
+            read<char>(packet, singleCharacter);
+            data = singleCharacter > 0 ? true : false;
             return packet;
         }
 
-        friend Packet<T>& operator >> (Packet<T>& packet, uint32_t& data)
+        friend Packet<T>& operator >> (Packet<T>& packet, float& data)
         {
-            read<uint32_t>(packet, data);
+            read<float>(packet, data);
+            return packet;
+        }
+
+        friend Packet<T>& operator >> (Packet<T>& packet, double& data)
+        {
+            read<double>(packet, data);
             return packet;
         }
 
@@ -141,53 +201,69 @@ namespace AENetwork
             return packet;
         }
 
-        //pushing data into packet buffer
-        //template<typename DataType>
-        //friend Packet<T>& operator << (Packet<T>& packet, const DataType& data)
-        //{
-        //    // check if the type of data is trivial copyable
-        //    static_assert(std::is_standard_layout<DataType>::value, "Data can not be pushed into a vector!");
+        friend Packet<T>& operator >> (Packet<T>& packet, uint16_t& data)
+        {
+            read<uint16_t>(packet, data);
+            return packet;
+        }
 
-        //    // cache current size of vector, this is the point where we insert data
-        //    size_t i = packet.body.size();
+        friend Packet<T>& operator >> (Packet<T>& packet, uint32_t& data)
+        {
+            read<uint32_t>(packet, data);
+            return packet;
+        }
 
-        //    // resize the vector by the size of pushed data
-        //    packet.body.resize(packet.body.size() + sizeof(DataType));
+        friend Packet<T>& operator >> (Packet<T>& packet, uint64_t& data)
+        {
+            read<uint64_t>(packet, data);
+            return packet;
+        }
 
-        //    // vector is now ready to hold the data
-        //    // copy the data into the allocated space
-        //    std::memcpy(packet.body.data() + i, &data, sizeof(DataType));
+        friend Packet<T>& operator >> (Packet<T>& packet, int8_t& data)
+        {
+            read<int8_t>(packet, data);
+            return packet;
+        }
 
-        //    // update size of our header
-        //    packet.header.size = static_cast<uint32_t>(packet.size());
+        friend Packet<T>& operator >> (Packet<T>& packet, int16_t& data)
+        {
+            read<int16_t>(packet, data);
+            return packet;
+        }
 
-        //    // return the target message to chain more data to it
-        //    return packet;
-        //}
+        friend Packet<T>& operator >> (Packet<T>& packet, int32_t& data)
+        {
+            read<int32_t>(packet, data);
+            return packet;
+        }
 
-        //// pulling data from packet buffer
-        //template<typename DataType>
-        //friend Packet<T>& operator >> (Packet<T>& packet, DataType& data)
-        //{
-        //    // check if the type of data is trivial copyable
-        //    static_assert(std::is_standard_layout<DataType>::value, "Data can not be pushed into a vector!");
+        friend Packet<T>& operator >> (Packet<T>& packet, int64_t& data)
+        {
+            read<int64_t>(packet, data);
+            return packet;
+        }
 
-        //    // cache location towards the end of the vector where the pulled data starts
-        //    size_t i = packet.body.size() - sizeof(DataType);
+        // handle special types
+        friend Packet<T>& operator >> (Packet<T>& packet, std::string& data)
+        {
+            // clear std::string, who knows what the user already did to it.
+            data.clear();
 
-        //    // copy the data from the vector into user variable
-        //    std::memcpy(&data, packet.body.data() + i, sizeof(DataType));
+            while (true)
+            {
+                char singleCharacter;
+                read<char>(packet, singleCharacter);
 
-        //    //resize the vector, we have the data (read bytes) and reset end position
-        //    packet.body.resize(i);
+                // we found our 0 byte, get out of here!
+                if (singleCharacter == 0)
+                    break;
 
-        //    // update size of our header
-        //    packet.header.size = static_cast<uint32_t>(packet.size());
+                // add char to std::string :-)
+                data += singleCharacter;
+            }
 
-        //    // return the target packet to chain more data to it
-        //    return packet;
-        //}
-
+            return packet;
+        }
     };
 
     //forward declare the connection
