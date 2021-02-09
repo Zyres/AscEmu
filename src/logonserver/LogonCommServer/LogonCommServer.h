@@ -113,17 +113,15 @@ namespace AENetwork
                     //read packet <<
 
                     CmsgAuthRequest ar;
-                    packet >> ar.random;
-                    packet >> ar.key;
-                    packet >> ar.text;
+                    packet >> ar.random >> ar.key >> ar.text;
 
                     std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << " Text: " << ar.text << "\n";
 
                     // ckeck security
 
                     // create new packet
-                    AENetwork::Packet<AENetwork::LogonCommTypes> packetOut;
-                    packetOut.header.id = AENetwork::LogonCommTypes::SMSG_AUTH_RESPONSE;
+                    Packet<LogonCommTypes> packetOut;
+                    packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
                     packetOut << uint32_t(1);
                     client->sendPacket(packetOut);
                 } break;
