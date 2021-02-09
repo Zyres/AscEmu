@@ -113,7 +113,9 @@ namespace AENetwork
                     //read packet <<
 
                     CmsgAuthRequest ar;
-                    packet >> ar;
+                    packet >> ar.random;
+                    packet >> ar.key;
+                    packet >> ar.text;
 
                     std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << " Text: " << ar.text << "\n";
 

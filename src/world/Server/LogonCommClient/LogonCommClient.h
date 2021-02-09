@@ -95,7 +95,7 @@ namespace AENetwork
 
             CmsgAuthRequest ar{ 25778 , 5, "Some text example"};
 
-            packet << ar;
+            packet << ar.random << ar.key << ar.text;
             sendPacket(packet);
         }
     };

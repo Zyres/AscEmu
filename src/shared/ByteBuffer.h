@@ -74,7 +74,8 @@ public:
             _curbitval = 0;
         }
 
-        template <typename T> void append(T value)
+        template <typename T>
+        void append(T value)
         {
             flushBits();
             append(reinterpret_cast<uint8_t *>(&value), sizeof(value));
@@ -433,14 +434,16 @@ public:
             return _wpos * 8 + 8 - _bitpos;
         }
 
-        template <typename T> T read()
+        template <typename T>
+        T read()
         {
             T r = read<T>(_rpos);
             _rpos += sizeof(T);
             return r;
         }
 
-        template <typename T> T read(size_t pos)
+        template <typename T>
+        T read(size_t pos)
         {
             if (pos + sizeof(T) > size())
             {
@@ -522,7 +525,8 @@ public:
             return append(reinterpret_cast<const uint8_t*>(src), cnt);
         }
 
-        template<class T> void append(const T *src, size_t cnt)
+        template<class T>
+        void append(const T *src, size_t cnt)
         {
             return append((const uint8 *)src, cnt * sizeof(T));
         }
