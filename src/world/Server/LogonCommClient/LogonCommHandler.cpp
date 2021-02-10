@@ -81,7 +81,6 @@ class LogonCommWatcherThread : public ThreadBase
     {
         AENetwork::LogonCommClient commClient;
         commClient.connectToServer("127.0.0.1", 8180);
-
         commClient.sendAuth();
 
         sLogonCommHandler.connectToLogonServer();
@@ -90,34 +89,12 @@ class LogonCommWatcherThread : public ThreadBase
             sLogonCommHandler.updateLogonServerConnection();
 
             //hack in new logonCommClient
-            if (commClient.isConnected())
+            if (!commClient.update())
             {
-                if (!commClient.incomingQueue().empty())
-                {
-                    auto packet = commClient.incomingQueue().pop_front().packet;
-
-                    switch (packet.header.id)
-                    {
-                        case AENetwork::LogonCommTypes::CMSG_AUTH_REQUEST:
-                        {
-                            uint32_t result;
-
-                            packet >> result;
-                            std::cout << "Received LRCMSG_AUTH_REQUEST: Result " << result << "\n";
-
-                        } break;
-                    }
-                }
-            }
-            else
-            {
-                std::cout << "LogonCommClient Down\n";
-
+                commClient.disconnect();
                 commClient.connectToServer("127.0.0.1", 8180);
-
                 commClient.sendAuth();
             }
-
             //hack end
             cond.Wait(5000);
         }

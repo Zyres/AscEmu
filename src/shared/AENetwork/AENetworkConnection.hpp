@@ -163,7 +163,7 @@ namespace AENetwork
                 {
                     if (!errorCode)
                     {
-                        if (m_queuePacketsOut.front().body.size() > 0)
+                        if (!m_queuePacketsOut.front().body.empty())
                         {
                             writeBodyToPacket();
                         }

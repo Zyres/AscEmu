@@ -81,56 +81,78 @@ namespace AENetwork
 
     protected:
         //called when client connects, we can refuse the connection
-        virtual bool onClientConnect(std::shared_ptr<Connection<LogonCommTypes>> client)
+        bool onClientConnect(std::shared_ptr<Connection<LogonCommTypes>> client) override
         {
             // banned ip...
             return true;
         }
 
         // called when a client appears to have disconnected
-        virtual void onClientDisconnect(std::shared_ptr<Connection<LogonCommTypes>> client)
+        void onClientDisconnect(std::shared_ptr<Connection<LogonCommTypes>> client) override
         {
             std::cout << "Removing client [" << client->getId() << "]\n";
         }
 
         //called when a packet arrives
-        virtual void onMessage(std::shared_ptr<Connection<LogonCommTypes>> client, Packet<LogonCommTypes>& packet)
+        void onMessage(std::shared_ptr<Connection<LogonCommTypes>> client, Packet<LogonCommTypes>& packet) override
         {
-            std::cout << "[SERVER] OnMessage called!\n";
-
             if (!client->isClientAuthorized())
                 std::cout << "[SERVER] client ["<< client->getId() <<"] is not authorized!\n";
 
+            //TODO CMSG_REALM_REGISTER_REQUEST, CMSG_ACC_SESSION_REQUEST, CMSG_LOGON_PING_STATUS,
+            // CMSG_AUTH_REQUEST, CMSG_ACC_CHAR_MAPPING_RESULT, CMSG_ACC_CHAR_MAPPING_UPDATE,
+            // CMSG_ACCOUNT_DB_MODIFY_REQUEST, CMSG_REALM_POPULATION_RESULT, CMSG_ACCOUNT_REQUEST,
+            // CMSG_ALL_ACCOUNT_REQUEST, CMSG_LOGIN_CONSOLE_REQUEST,
+
             switch (packet.header.id)
             {
-                case LogonCommTypes::CMSG_REALM_REGISTER_REQUEST:
-                {
-                    std::cout << "[" << client->getId() << "]: Auth Register Request\n";
-                } break;
                 case LogonCommTypes::CMSG_AUTH_REQUEST:
-                {
-                    std::cout << "[" << client->getId() << "]: Auth Request\n";
-                    //read packet <<
-
-                    CmsgAuthRequest ar;
-                    packet >> ar.random >> ar.key >> ar.text;
-
-                    std::cout << "[" << client->getId() << "]: Received Request: Random: " << ar.random << " Key: " << ar.key << " Text: " << ar.text << "\n";
-
-                    // ckeck security
-
-                    // create new packet
-                    Packet<LogonCommTypes> packetOut;
-                    packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
-                    packetOut << uint32_t(1);
-                    client->sendPacket(packetOut);
-                } break;
-            default:
-            {
-                // unknown packet opcode/header.id, disconnect!
-                client->disconnect();
-            } break;
+                    handleAuthRequest(client, packet);
+                    break;
+                default:
+                    LogError("Unimplemented packet: %u in LogonCommClient::onMessage", packet.header.id);
+                    break;
             }
+        }
+
+        void handleAuthRequest(std::shared_ptr<Connection<LogonCommTypes>> client, Packet<LogonCommTypes>& packet)
+        {
+            std::cout << "[" << client->getId() << "]: Auth Request\n";
+
+            //read packet <<
+            std::string sql_passhash;
+            uint8_t realmId = 0;
+
+            packet >> sql_passhash;
+            packet >> realmId;
+
+            const auto realm = sRealmsMgr.getRealmById(realmId);
+            if (realm == nullptr)
+            {
+                LogError("Realm %u is missing in table realms. Please add the server to your realms table.", static_cast<uint32_t>(realmId));
+                return;
+            }
+
+            LogDefault("Password from packet %s; password in db %s", sql_passhash.c_str(), realm->password.c_str());
+
+            // check if we have the correct password
+            bool result = true;
+
+            if (sql_passhash.compare(realm->password))
+                result = false;
+
+            LogDefault("Authentication request from %u, id %u - result %s.", client->getId(), static_cast<uint32_t>(realmId), result ? "OK" : "FAIL");
+
+
+            client->setClientAuth(result);
+
+            // ckeck security
+
+            // create new packet
+            Packet<LogonCommTypes> packetOut;
+            packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
+            packetOut << result;
+            client->sendPacket(packetOut);
         }
     };
 }

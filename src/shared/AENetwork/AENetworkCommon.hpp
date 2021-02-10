@@ -49,7 +49,7 @@ namespace AENetwork
         CMSG_ALL_ACCOUNT_REQUEST = 0x017,  // request all account data
         SMSG_ALL_ACCOUNT_RESULT = 0x018,  // send id, name, rank of all accounts to realm
 
-        LRMSG_MAX_OPCODES                           // max opcodes
+        MSG_MAX_OPCODES                           // max opcodes
     };
 
     struct CmsgRegisterRequest
@@ -72,9 +72,8 @@ namespace AENetwork
 
     struct CmsgAuthRequest
     {
-        uint32_t random;
-        uint8_t key;
-        std::string text;
+        uint8_t* key;
+        uint8_t realmId;
     };
 
     struct SmsgAuthResponse

@@ -90,13 +90,46 @@ namespace AENetwork
     public:
         void sendAuth()
         {
+            std::string logon_pass = worldConfig.logonServer.remotePassword;
+
+            CmsgAuthRequest ar;
+            ar.realmId = Config.MainConfig.getIntDefault("Realm1", "Id", 1);
+
             Packet<LogonCommTypes> packet;
             packet.header.id = LogonCommTypes::CMSG_AUTH_REQUEST;
-
-            CmsgAuthRequest ar{ 25778 , 5, "Some text example"};
-
-            packet << ar.random << ar.key << ar.text;
+            packet << logon_pass;
+            packet << ar.realmId;
             sendPacket(packet);
+        }
+
+    protected:
+
+        void onMessage(Packet<LogonCommTypes>& packet) override
+        {
+            //TODO SMSG_REALM_REGISTER_RESULT, SMSG_ACC_SESSION_RESULT, SMSG_LOGON_PING_RESULT,
+            // SMSG_ACC_CHAR_MAPPING_REQUEST, SMSG_SEND_ACCOUNT_DISCONNECT,
+            // SMSG_LOGIN_CONSOLE_RESULT, SMSG_ACCOUNT_DB_MODIFY_RESULT, SMSG_REALM_POPULATION_REQUEST,
+            // SMSG_ACCOUNT_RESULT, SMSG_ALL_ACCOUNT_RESULT
+
+            switch (packet.header.id)
+            {
+                case LogonCommTypes::SMSG_AUTH_RESPONSE:
+                    handleAuthResponse(packet);
+                    break;
+                default:
+                    LogError("Unimplemented packet: %u in LogonCommClient::onMessage", packet.header.id);
+                    break;
+            }
+        }
+
+        void handleAuthResponse(Packet<LogonCommTypes>& packet)
+        {
+            // read packet
+            bool result;
+            packet >> result;
+            std::cout << "Received LRCMSG_AUTH_REQUEST: Result " << (result ? "OK" : "FAIL") << "\n";
+
+            // do some other stuff
         }
     };
 }

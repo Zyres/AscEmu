@@ -18,12 +18,17 @@ namespace AENetwork
     public:
         ClientInterface() : m_socket(m_context)
         {
-
+            ClientInterface<T>::init();
         }
 
         virtual ~ClientInterface()
         {
             disconnect();
+        }
+
+        virtual void init()
+        {
+            
         }
 
     public:
@@ -81,8 +86,8 @@ namespace AENetwork
         {
             if (m_connection)
                 return m_connection->isConnected();
-            else
-                return false;
+
+            return false;
         }
 
         // send packet to server
@@ -97,7 +102,34 @@ namespace AENetwork
             return m_queuePacketsIn;
         }
 
+        bool update()
+        {
+            if (isConnected())
+            {
+                if (!incomingQueue().empty())
+                {
+                    auto packet = m_queuePacketsIn.pop_front().packet;
+
+                    onMessage(packet);
+
+                }
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
     protected:
+        //called when a packet arrives
+        virtual void onMessage(Packet<T>& packet)
+        {
+            std::cout << "[Client] OnMessage (ClientInterface) called!\n";
+        }
+
+
         // the client interface ownes the asio context to handle the data transfer
         asio::io_context m_context;
 
