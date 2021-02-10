@@ -90,15 +90,14 @@ namespace AENetwork
     public:
         void sendAuth()
         {
-            std::string logon_pass = worldConfig.logonServer.remotePassword;
-
-            CmsgAuthRequest ar;
-            ar.realmId = Config.MainConfig.getIntDefault("Realm1", "Id", 1);
+            CmsgAuthRequest authRequest;
+            authRequest.realmId = Config.MainConfig.getIntDefault("Realm1", "Id", 1);
+            authRequest.password = worldConfig.logonServer.remotePassword;
 
             Packet<LogonCommTypes> packet;
             packet.header.id = LogonCommTypes::CMSG_AUTH_REQUEST;
-            packet << logon_pass;
-            packet << ar.realmId;
+            packet << authRequest.password;
+            packet << authRequest.realmId;
             sendPacket(packet);
         }
 
@@ -124,12 +123,9 @@ namespace AENetwork
 
         void handleAuthResponse(Packet<LogonCommTypes>& packet)
         {
-            // read packet
-            bool result;
-            packet >> result;
-            std::cout << "Received LRCMSG_AUTH_REQUEST: Result " << (result ? "OK" : "FAIL") << "\n";
-
-            // do some other stuff
+            SmsgAuthResponse authResponse;
+            packet >> authResponse.result;
+            std::cout << "Received CMSG_AUTH_REQUEST: Result " << (authResponse.result ? "OK" : "FAIL") << "\n";
         }
     };
 }

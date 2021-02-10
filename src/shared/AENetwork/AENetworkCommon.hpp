@@ -72,12 +72,14 @@ namespace AENetwork
 
     struct CmsgAuthRequest
     {
-        uint8_t* key;
+        std::string password;
         uint8_t realmId;
     };
 
     struct SmsgAuthResponse
-    {};
+    {
+        bool result;
+    };
 
     struct SmsgCharMappingRequest
     {};
