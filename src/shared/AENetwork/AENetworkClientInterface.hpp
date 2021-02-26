@@ -18,7 +18,6 @@ namespace AENetwork
     public:
         ClientInterface() : m_socket(m_context)
         {
-            ClientInterface<T>::init();
         }
 
         virtual ~ClientInterface()
@@ -26,12 +25,6 @@ namespace AENetwork
             disconnect();
         }
 
-        virtual void init()
-        {
-            
-        }
-
-    public:
         //connect to the server with hostname/ip-address and port
         bool connectToServer(const std::string& host, const uint16_t port)
         {
@@ -50,8 +43,8 @@ namespace AENetwork
                 //connect to server
                 m_connection->connectToServer(endpoints);
 
-
                 // start context thread
+                //\todo: servercrash when no server is reachable -.-
                 m_contextThread = std::thread([this]() { m_context.run(); });
 
             }
@@ -102,24 +95,8 @@ namespace AENetwork
             return m_queuePacketsIn;
         }
 
-        bool update()
+        virtual void update()
         {
-            if (isConnected())
-            {
-                if (!incomingQueue().empty())
-                {
-                    auto packet = m_queuePacketsIn.pop_front().packet;
-
-                    onMessage(packet);
-
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
         }
 
     protected:

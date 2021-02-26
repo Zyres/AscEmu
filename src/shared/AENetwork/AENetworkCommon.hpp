@@ -76,9 +76,15 @@ namespace AENetwork
         uint8_t realmId;
     };
 
+    enum class AuthState : uint8_t
+    {
+        Failed,
+        Successful
+    };
+
     struct SmsgAuthResponse
     {
-        bool result;
+        uint8_t result;
     };
 
     struct SmsgCharMappingRequest

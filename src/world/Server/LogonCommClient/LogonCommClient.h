@@ -35,6 +35,8 @@
 #include <AENetwork/AENetworkServerInterface.hpp>
 #include <AENetwork/AENetworkCommon.hpp>
 #include <AENetwork/AENetworkThreadsafeQueue.hpp>
+#include <chrono>
+#include <thread>
 
 class LogonCommClientSocket : public Socket
 {
@@ -88,8 +90,78 @@ namespace AENetwork
     class LogonCommClient : public ClientInterface<LogonCommTypes>
     {
     public:
+        void tryToConnect()
+        {
+            isAuthenticated = false;
+
+            LogNotice("NEW---LogonCommClient : Attempting to connect to logon server...");
+
+            while (!isAuthenticated)
+            {
+                if (!isConnected())
+                {
+                    connectToServer("127.0.0.1", 8180);
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                    if (!isConnected())
+                    {
+                        disconnect();
+
+                        LogError("NEW---Connection failed. Will try again in 10 seconds.");
+
+                        std::this_thread::sleep_for(std::chrono::seconds(10));
+                    }
+                }
+                else
+                {
+                    LogNotice("NEW---LogonCommClient : Authenticating...");
+                    sendAuth();
+
+                    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+                    if (!incomingQueue().empty())
+                    {
+                        auto packet = incomingQueue().pop_front().packet;
+                        onMessage(packet);
+
+                        if (!isAuthenticated)
+                        {
+                            LogError("NEW---Authentication failed! Closing connection.");
+                            disconnect();
+                            break;
+                        }
+
+                        LogNotice("NEW---LogonCommClient : Successful authenticated");
+                        break;
+                    }
+
+                    LogError("NEW---Authentication failed! Server not responding. Retry in 10 seconds.");
+
+                    std::this_thread::sleep_for(std::chrono::seconds(10));
+                }
+            }
+        }
+
+        void update() override
+        {
+            if (isConnected())
+            {
+                if (!incomingQueue().empty())
+                {
+                    auto packet = incomingQueue().pop_front().packet;
+                    onMessage(packet);
+                }
+            }
+            else
+            {
+                tryToConnect();
+            }
+        }
+
         void sendAuth()
         {
+            //todo: password encryption
             CmsgAuthRequest authRequest;
             authRequest.realmId = Config.MainConfig.getIntDefault("Realm1", "Id", 1);
             authRequest.password = worldConfig.logonServer.remotePassword;
@@ -116,7 +188,7 @@ namespace AENetwork
                     handleAuthResponse(packet);
                     break;
                 default:
-                    LogError("Unimplemented packet: %u in LogonCommClient::onMessage", packet.header.id);
+                    LogError("NEW---Unimplemented packet: %u in LogonCommClient::onMessage", packet.header.id);
                     break;
             }
         }
@@ -125,8 +197,15 @@ namespace AENetwork
         {
             SmsgAuthResponse authResponse;
             packet >> authResponse.result;
-            std::cout << "Received CMSG_AUTH_REQUEST: Result " << (authResponse.result ? "OK" : "FAIL") << "\n";
+
+            std::cout << "NEW---Received CMSG_AUTH_REQUEST: Result: " << static_cast<uint32_t>(authResponse.result) << "\n";
+
+            if (authResponse.result)
+                isAuthenticated = true;
         }
+
+    private:
+        bool isAuthenticated = false;
     };
 }
 

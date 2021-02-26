@@ -124,26 +124,33 @@ namespace AENetwork
             const auto realm = sRealmsMgr.getRealmById(authRequest.realmId);
             if (realm == nullptr)
             {
-                LogError("Realm %u is missing in table realms. Please add the server to your realms table.", static_cast<uint32_t>(authRequest.realmId));
+                LogError("NEWRealm %u is missing in table realms. Please add the server to your realms table.", static_cast<uint32_t>(authRequest.realmId));
                 return;
             }
 
-            LogDefault("Password from packet %s; password in db %s", authRequest.password.c_str(), realm->password.c_str());
+            LogDefault("NEWPassword from packet %s; password in db %s", authRequest.password.c_str(), realm->password.c_str());
 
             // check if we have the correct password
-            bool result = true;
-
             if (authRequest.password != realm->password)
-                result = false;
+            {
+                LogDefault("NEWAuthentication request from %u, id %u - result: %s.", client->getId(), static_cast<uint32_t>(authRequest.realmId), "Fail");
+                Packet<LogonCommTypes> packetOut;
+                packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
+                packetOut << 0;
+                client->sendPacket(packetOut);
+                client->disconnect();
+            }
+            else
+            {
+                LogDefault("NEWAuthentication request from %u, id %u - result %s.", client->getId(), static_cast<uint32_t>(authRequest.realmId), "OK");
 
-            LogDefault("Authentication request from %u, id %u - result %s.", client->getId(), static_cast<uint32_t>(authRequest.realmId), result ? "OK" : "FAIL");
+                client->setClientAuth(true);
 
-            client->setClientAuth(result);
-
-            Packet<LogonCommTypes> packetOut;
-            packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
-            packetOut << result;
-            client->sendPacket(packetOut);
+                Packet<LogonCommTypes> packetOut;
+                packetOut.header.id = LogonCommTypes::SMSG_AUTH_RESPONSE;
+                packetOut << 1;
+                client->sendPacket(packetOut);
+            }
         }
     };
 }

@@ -80,8 +80,7 @@ class LogonCommWatcherThread : public ThreadBase
     bool runThread()
     {
         AENetwork::LogonCommClient commClient;
-        commClient.connectToServer("127.0.0.1", 8180);
-        commClient.sendAuth();
+        commClient.tryToConnect();
 
         sLogonCommHandler.connectToLogonServer();
         while (running)
@@ -89,12 +88,7 @@ class LogonCommWatcherThread : public ThreadBase
             sLogonCommHandler.updateLogonServerConnection();
 
             //hack in new logonCommClient
-            if (!commClient.update())
-            {
-                commClient.disconnect();
-                commClient.connectToServer("127.0.0.1", 8180);
-                commClient.sendAuth();
-            }
+            commClient.update();
             //hack end
             cond.Wait(5000);
         }
