@@ -13,7 +13,6 @@ This file is released under the MIT license. See README-MIT for more information
 #include <vector>
 #include <cstdint>
 #include <algorithm>
-#include <optional>
 
 #define ASIO_STANDALONE
 #include <asio.hpp>
