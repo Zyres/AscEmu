@@ -155,9 +155,7 @@ include_directories(
 
 add_executable(${PROJECT_NAME} ${sources})
 
-if(USE_PCH)
-    gen_cxx_pch(${PROJECT_NAME} StdAfx.h ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.cpp)
-endif()
+set(WORLD_PCH_HEADERS StdAfx.h)
 
 if(WIN32 AND NOT USE_PCH)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
@@ -178,3 +176,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/WorldConf.h.in ${CMAKE_CURRENT_SOURCE
 
 target_link_libraries(${PROJECT_NAME} shared g3dlite Detour Recast ${PCRE_LIBRARIES})
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
+
+if(USE_PCH)
+    gen_cxx_pch(${PROJECT_NAME} ${WORLD_PCH_HEADERS})
+endif()
