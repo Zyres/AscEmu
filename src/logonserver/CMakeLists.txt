@@ -43,10 +43,6 @@ link_directories(${EXTRA_LIBS_PATH} ${DEPENDENCY_LIBS})
 
 add_executable(${PROJECT_NAME} ${sources})
 
-if(USE_PCH)
-    gen_cxx_pch(${PROJECT_NAME} LogonStdAfx.h ${CMAKE_CURRENT_SOURCE_DIR}/LogonStdAfx.cpp)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR CMAKE_SYSTEM_NAME STREQUAL "kFreeBSD")
     target_link_libraries(${PROJECT_NAME} c++experimental)
 elseif (NOT WIN32)
@@ -60,6 +56,11 @@ target_link_libraries(${PROJECT_NAME} shared ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES
 
 #Provide make install rules.
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
+
+if(USE_PCH)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "LogonStdAfx.h")
+	cotire(${PROJECT_NAME})
+endif()
 
 unset(sources)
 unset(headers)
