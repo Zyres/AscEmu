@@ -86,5 +86,9 @@ elseif (NOT WIN32)
     target_link_libraries(${PROJECT_NAME} stdc++fs)
 endif()
 
+if(USE_PCH)
+	cotire(${PROJECT_NAME})
+endif()
+
 unset(sources)
 unset(headers)
