@@ -3,13 +3,23 @@ Copyright (c) 2014-2021 AscEmu Team <http://www.ascemu.org>
 This file is released under the MIT license. See README-MIT for more information.
 */
 
-#include "LogonStdAfx.h"
+#include "Master.hpp"
+
+
+#include <LogonConf.h>
 #include <Threading/AEThreadPool.h>
 #include "Util.hpp"
 #include "Database/DatabaseUpdater.hpp"
 #include "Logon.h"
 #include "IpBanMgr.h"
+#include "Auth/AuthSocket.h"
+#include "Auth/AutoPatcher.h"
+#include "Console/LogonConsole.h"
+#include "Logging/Logger.hpp"
 #include "Realm/RealmManager.hpp"
+#include "Database/Database.h"
+#include "Network/Network.h"
+#include "Util/Strings.hpp"
 
 using std::chrono::milliseconds;
 

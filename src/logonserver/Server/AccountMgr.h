@@ -4,6 +4,16 @@ This file is released under the MIT license. See README-MIT for more information
 */
 
 #pragma once
+#include <cstdint>
+#include <map>
+#include <memory>
+#include <string>
+
+#include "CommonTypes.hpp"
+#include "Threading/AEThread.h"
+#include "Threading/Mutex.h"
+
+class Field;
 
 struct Account
 {

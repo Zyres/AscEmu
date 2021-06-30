@@ -56,6 +56,3 @@
 #include "Server/Master.hpp"
 #include "Server/LogonServerDefines.hpp"
 #include "Realm/RealmManager.hpp"
-
-// database decl
-extern Database* sLogonSQL;

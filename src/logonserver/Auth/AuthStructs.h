@@ -21,6 +21,8 @@
 #define AUTHSTRUCTS_H
 
 #pragma pack(push,1)
+#include "CommonTypes.hpp"
+
 typedef struct
 {
     uint8   cmd;

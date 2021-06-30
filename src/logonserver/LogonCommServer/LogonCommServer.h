@@ -22,6 +22,7 @@
 
 #include <RC4Engine.h>
 #include "zlib.h"
+#include "Network/Socket.h"
 
 class LogonCommServerSocket : public Socket
 {

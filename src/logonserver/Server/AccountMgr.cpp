@@ -3,8 +3,19 @@ Copyright (c) 2014-2021 AscEmu Team <http://www.ascemu.org>
 This file is released under the MIT license. See README-MIT for more information.
 */
 
-#include "LogonStdAfx.h"
 #include "AccountMgr.h"
+
+#include <cstdint>
+
+
+
+#include "Log.hpp"
+#include "Database/Database.h"
+#include "Logging/Logger.hpp"
+#include "Threading/AEThread.h"
+#include "Master.hpp"
+#include "Auth/BigNumber.h"
+#include "Util/Strings.hpp"
 
 AccountMgr& AccountMgr::getInstance()
 {

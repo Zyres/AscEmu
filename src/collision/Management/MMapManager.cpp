@@ -19,7 +19,6 @@
 
 #include "MMapManager.h"
 #include "MapDefines.h"
-#include "StdAfx.h"
 #include "Errors.h"
 #include "Server/World.h"
 #include "Server/World.Legacy.h"

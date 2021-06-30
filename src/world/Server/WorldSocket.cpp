@@ -21,9 +21,8 @@
 // Class WorldSocket - Main network code functions, handles
 // reading/writing of all packets.
 
-#include "StdAfx.h"
-//#include "Server/CharacterErrors.h"
-//#include "Management/AddonMgr.h"
+
+#include "WorldSocket.h"
 #include "Server/LogonCommClient/LogonCommHandler.h"
 #include "Server/MainServerDefines.h"
 #include "Auth/Sha1.h"
@@ -33,7 +32,7 @@
 #include "Packets/SmsgAuthChallenge.h"
 #include "Packets/SmsgAuthResponse.h"
 #include "OpcodeTable.hpp"
-//#include "World.Legacy.h"
+
 
 using namespace AscEmu::Packets;
 

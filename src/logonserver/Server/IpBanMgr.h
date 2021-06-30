@@ -4,6 +4,12 @@ This file is released under the MIT license. See README-MIT for more information
 */
 
 #pragma once
+#include <list>
+#include <string>
+
+#include "Threading/Mutex.h"
+
+struct in_addr;
 
 struct IPBan
 {

@@ -3,12 +3,18 @@ Copyright (c) 2014-2021 AscEmu Team <http://www.ascemu.org>
 This file is released under the MIT license. See README-MIT for more information.
 */
 
-#include "LogonStdAfx.h"
 #include "Server/Logon.h"
 #include "RealmManager.hpp"
 #include "Util.hpp"
 #include <Threading/AEThreadPool.h>
+
+
+#include "Auth/AuthSocket.h"
+#include "Database/Database.h"
+#include "Logging/Logger.hpp"
+#include "LogonCommServer/LogonCommServer.h"
 #include "Realm/RealmFlag.hpp"
+#include "Server/Master.hpp"
 
 namespace AscEmu::Realm
 {

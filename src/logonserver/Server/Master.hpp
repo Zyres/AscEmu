@@ -8,6 +8,9 @@ This file is released under the MIT license. See README-MIT for more information
 #include "LogonServerDefines.hpp"
 #include "../shared/AscemuServerDefines.hpp"
 
+class Database;
+extern Database* sLogonSQL;
+
 extern std::atomic<bool> mrunning;
 class AuthSocket;
 extern std::set<AuthSocket*> _authSockets;

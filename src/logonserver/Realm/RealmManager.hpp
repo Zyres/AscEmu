@@ -6,6 +6,11 @@ This file is released under the MIT license. See README-MIT for more information
 #pragma once
 
 #include "Common.hpp"
+#include "Threading/AEThread.h"
+#include "LogonCommServer/LogonCommServer.h"
+
+class AuthSocket;
+
 namespace AscEmu::Realm
 {
     struct Realm

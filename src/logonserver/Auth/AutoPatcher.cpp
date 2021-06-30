@@ -17,8 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LogonStdAfx.h"
+#include "AutoPatcher.h"
+
 #include "../shared/Auth/MD5.h"
+#include "Logging/Logger.hpp"
 
 #ifndef WIN32
 #include <fcntl.h>

@@ -21,7 +21,11 @@
 #define AUTHSOCKET_H
 
 #include "AuthStructs.h"
+#include "Auth/BigNumber.h"
+#include "Network/Socket.h"
+#include "Server/AccountMgr.h"
 
+class Sha1Hash;
 class LogonCommServerSocket;
 struct Patch;
 class PatchJob;

@@ -17,11 +17,22 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LogonStdAfx.h"
+#include "LogonCommServer.h"
+
 #include "LogonCommDefines.h"
+#include "WorldPacket.h"
+#include "Auth/Sha1.h"
+#include "Database/Database.h"
+#include "Logging/Logger.hpp"
+#include "Network/Socket.h"
+#include "Realm/RealmManager.hpp"
+#include "Server/AccountMgr.h"
+#include "Server/IpBanMgr.h"
+#include "Server/Master.hpp"
+#include "Util/Strings.hpp"
 
 
-LogonCommServerSocket::LogonCommServerSocket(SOCKET fd) : Socket(fd, 65536, 524288)
+LogonCommServerSocket::LogonCommServerSocket(SOCKET fd) : ::Socket(fd, 65536, 524288)
 {
     // do nothing
     last_ping = (uint32)UNIXTIME;
