@@ -58,6 +58,8 @@ endif()
 source_group(world FILES ${SRC_WORLD_PROJECT})
 
 set(sources
+   ${SRC_WORLD_PROJECT}
+   
    ${SRC_GAMECLASSIC_FILES}
    ${SRC_GAMECLASSIC_STORAGE_FILES}
    
@@ -110,7 +112,6 @@ set(sources
    ${SRC_UNITS_CREATURES_FILES}
    ${SRC_UNITS_PLAYERS_FILES}
    ${SRC_UNITS_SUMMONS_FILES}
-   ${SRC_WORLD_PROJECT}
    
    # Required for linker
    ../collision/Management/VMapFactory.cpp
@@ -155,8 +156,6 @@ include_directories(
 
 add_executable(${PROJECT_NAME} ${sources})
 
-set(WORLD_PCH_HEADERS StdAfx.h)
-
 if(WIN32 AND NOT USE_PCH)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/INCREMENTAL:NO")
 endif()
@@ -178,5 +177,6 @@ target_link_libraries(${PROJECT_NAME} shared g3dlite Detour Recast ${PCRE_LIBRAR
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
 
 if(USE_PCH)
-    gen_cxx_pch(${PROJECT_NAME} ${WORLD_PCH_HEADERS})
+	set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "StdAfx.h")
+	cotire(${PROJECT_NAME})
 endif()
