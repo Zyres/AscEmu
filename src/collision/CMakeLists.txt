@@ -5,6 +5,8 @@ file(GLOB sources_Maps Maps/*.cpp Maps/*.h)
 file(GLOB sources_Models Models/*.cpp Models/*.h)
 file(GLOB sources_localdir *.cpp *.h)
 
+set(PCH_HEADERS PCH/collisionPCH.hpp)
+
 set(collision_STAT_SRCS
   ${collision_STAT_SRCS}
   ${sources_Management}
@@ -31,5 +33,5 @@ add_library(collision STATIC ${collision_STAT_SRCS})
 target_link_libraries(collision g3dlite shared)
 
 if(USE_PCH)
-	cotire(collision)
+	gen_cxx_pch(collision ${PCH_HEADERS})
 endif()

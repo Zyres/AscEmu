@@ -46,20 +46,15 @@ include(Units/Creatures/CMakeLists.txt)
 include(Units/Players/CMakeLists.txt)
 include(Units/Summons/CMakeLists.txt)
 
-set(SRC_WORLD_PROJECT
-   ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/StdAfx.h
-)
-
 if(WIN32)
    set(SRC_WORLD_PROJECT ${SRC_WORLD_PROJECT} ${CMAKE_CURRENT_SOURCE_DIR}/resources.rc)
 endif()
 
 source_group(world FILES ${SRC_WORLD_PROJECT})
 
+set(PCH_HEADERS PCH/worldPCH.hpp)
+
 set(sources
-   ${SRC_WORLD_PROJECT}
-   
    ${SRC_GAMECLASSIC_FILES}
    ${SRC_GAMECLASSIC_STORAGE_FILES}
    
@@ -177,6 +172,5 @@ target_link_libraries(${PROJECT_NAME} shared g3dlite Detour Recast ${PCRE_LIBRAR
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
 
 if(USE_PCH)
-	set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "StdAfx.h")
-	cotire(${PROJECT_NAME})
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
 endif()

@@ -11,7 +11,6 @@ This file is released under the MIT license. See README-MIT for more information
 #include <iostream>
 #include <cstdarg>
 #include <string>
-#include "../../src/world/WorldConf.h"
 
 namespace AscEmu::Logging
 {
@@ -47,7 +46,7 @@ namespace AscEmu::Logging
         std::string normal_filename = file_prefix + "-normal.log";
         std::string error_filename = file_prefix + "-error.log";
 
-        std::string current_date_time = Util::GetCurrentDateTimeString();
+        std::string current_date_time = ::Util::GetCurrentDateTimeString();
 
         char logMessage[32768];
         sprintf(logMessage, "=================[%s]=================", current_date_time.c_str());
@@ -163,7 +162,7 @@ namespace AscEmu::Logging
         char formattedMessage[32768];
         vsnprintf(formattedMessage, 32768, message, arguments);
 
-        std::string currentTime = Util::GetCurrentTimeString();
+        std::string currentTime = ::Util::GetCurrentTimeString();
         std::string severityText = getSeverityText(severity);
         std::string messageTypeText = getMessageTypeText(messageType);
 
@@ -247,7 +246,7 @@ namespace AscEmu::Logging
 
         if (use_date_time)
         {
-            std::string current_date_time = Util::GetCurrentDateTimeString();
+            std::string current_date_time = ::Util::GetCurrentDateTimeString();
             //replace time seperator with valid character for file name
             std::replace(current_date_time.begin(), current_date_time.end(), ':', '-');
             std::replace(current_date_time.begin(), current_date_time.end(), ' ', '_');

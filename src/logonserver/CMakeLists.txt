@@ -9,16 +9,13 @@ include(LogonCommServer/CMakeLists.txt)
 include(Realm/CMakeLists.txt)
 include(Server/CMakeLists.txt)
 
-set(SRC_LOGON_PROJECT
-   ${CMAKE_CURRENT_SOURCE_DIR}/LogonStdAfx.cpp
-   ${CMAKE_CURRENT_SOURCE_DIR}/LogonStdAfx.h
-)
-
 if(WIN32)
    set(SRC_LOGON_PROJECT ${SRC_LOGON_PROJECT} ${CMAKE_CURRENT_SOURCE_DIR}/resources.rc)
 endif()
 
 source_group(logon FILES ${SRC_LOGON_PROJECT})
+
+set(PCH_HEADERS PCH/logonPCH.hpp)
 
 set(sources
    ${SRC_AUTH_FILES}
@@ -58,8 +55,7 @@ target_link_libraries(${PROJECT_NAME} shared ${MYSQL_LIBRARIES} ${ZLIB_LIBRARIES
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION .)
 
 if(USE_PCH)
-    set_target_properties(${PROJECT_NAME} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "LogonStdAfx.h")
-	cotire(${PROJECT_NAME})
+    gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
 endif()
 
 unset(sources)

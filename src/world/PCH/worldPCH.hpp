@@ -3,16 +3,7 @@ Copyright (c) 2014-2021 AscEmu Team <http://www.ascemu.org>
 This file is released under the MIT license. See README-MIT for more information.
 */
 
-#pragma once
-
 #include "WorldConf.h"
-
-#ifdef USE_PCH_INCLUDES
-#include <vector>
-#include <fstream>
-#include <array>
-#include <set>
-#include <map>
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Shared headers/defines
@@ -71,13 +62,6 @@ This file is released under the MIT license. See README-MIT for more information
 #include "Data/WoWPlayer.hpp"
 #include "Data/WoWUnit.hpp"
 
-// Management
-#if VERSION_STRING == Cata
-#include "GameCata/Management/GuildFinderMgr.h"
-#elif VERSION_STRING == Mop
-#include "GameMop/Management/GuildFinderMgr.h"
-#endif
-
 #include "Management/AchievementMgr.h"
 #include "Management/AddonMgr.h"
 #include "Management/Arenas.h"
@@ -131,10 +115,6 @@ This file is released under the MIT license. See README-MIT for more information
 
 #include "Management/Guild/GuildDefinitions.hpp"
 
-#include "Management/LFG/LFG.hpp"
-#include "Management/LFG/LFGGroupData.hpp"
-#include "Management/LFG/LFGMgr.hpp"
-#include "Management/LFG/LFGPlayerData.hpp"
 
 // Map
 #include "Map/CellHandler.h"
@@ -448,9 +428,6 @@ This file is released under the MIT license. See README-MIT for more information
 #include "Server/Script/InstanceScript.h"
 #include "Server/Script/ScriptMgr.h"
 
-// Server/Warden
-#include "Server/Warden/SpeedDetector.h"
-
 // Spell
 #include "Spell/Spell.h"
 #include "Spell/Spell.Legacy.h"
@@ -502,20 +479,11 @@ This file is released under the MIT license. See README-MIT for more information
 #include "Spell/Definitions/TeleportCoords.hpp"
 #include "Spell/Definitions/TeleportEffectCustomFlags.hpp"
 
-
 // Storage
 #include "Storage/DayWatcherThread.h"
 #include "Storage/MySQLDataStore.hpp"
 #include "Storage/MySQLStructures.h"
 #include "Storage/WorldStrings.h"
-
-// Storage/DB2
-#if VERSION_STRING >= Cata
-#include "Storage/DB2/DB2Loader.h"
-#include "Storage/DB2/DB2Storage.h"
-#include "Storage/DB2/DB2Stores.h"
-#include "Storage/DB2/DB2Structures.h"
-#endif
 
 // Storage/DBC
 #include "Storage/DBC/DBCGlobals.hpp"
@@ -546,14 +514,11 @@ This file is released under the MIT license. See README-MIT for more information
 #include "Units/Players/PlayerClasses.hpp"
 #include "Units/Players/PlayerDefines.hpp"
 
-// Units/Summons
-#include "Units/Summons/CompanionSummon.h"
-#include "Units/Summons/GuardianSummon.h"
-#include "Units/Summons/PossessedSummon.h"
-#include "Units/Summons/Summon.h"
-#include "Units/Summons/SummonDefines.hpp"
-#include "Units/Summons/SummonHandler.h"
-#include "Units/Summons/TotemSummon.h"
-#include "Units/Summons/WildSummon.h"
-
-#endif
+#include <vector>
+#include <fstream>
+#include <array>
+#include <set>
+#include <map>
+#include <cstring>
+#include <string>
+#include <unordered_map>

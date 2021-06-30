@@ -12,6 +12,8 @@ include(Network/CMakeLists.txt)
 include(Threading/CMakeLists.txt)
 include(Util/CMakeLists.txt)
 
+set(PCH_HEADERS PCH/sharedPCH.hpp)
+
 set(sources
     ${SRC_AUTH_FILES}
     ${SRC_CONFIG_FILES}
@@ -87,7 +89,7 @@ elseif (NOT WIN32)
 endif()
 
 if(USE_PCH)
-	cotire(${PROJECT_NAME})
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
 endif()
 
 unset(sources)
