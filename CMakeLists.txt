@@ -2,6 +2,8 @@
 project(Ascemu)
 cmake_minimum_required(VERSION 3.16.1)
 
+cmake_policy(SET CMP0043 NEW)
+
 # set runtime binary where all compiled (before install) binary will compiled in
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -33,7 +35,14 @@ set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/dep/cotire/CMake")
+
+list(APPEND CMAKE_MODULE_PATH
+  "${CMAKE_SOURCE_DIR}/cmake/Module"
+
+if (CMAKE_VERSION VERSION_LESS "3.16.0")
+  list(APPEND CMAKE_MODULE_PATH
+          "${CMAKE_SOURCE_DIR}/dep/cotire/CMake")
+endif()
 
 # add dependecies
 add_subdirectory(dep)
