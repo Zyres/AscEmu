@@ -8,6 +8,8 @@ endif()
 # set up our project name
 project(InstanceScripts CXX)
 
+set(PCH_HEADERS PCH/InstanceScriptsPCH.hpp)
+
 include(Classic/CMakeLists.txt)
 include(Tbc/CMakeLists.txt)
 include(Wotlk/CMakeLists.txt)
@@ -48,7 +50,9 @@ add_library(${PROJECT_NAME} SHARED ${sources} ${headers})
 
 target_link_libraries(${PROJECT_NAME} world)
 
-
+if(USE_PCH)
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${ASCEMU_SCRIPTLIB_PATH} LIBRARY DESTINATION ${ASCEMU_SCRIPTLIB_PATH})
 unset(sources)

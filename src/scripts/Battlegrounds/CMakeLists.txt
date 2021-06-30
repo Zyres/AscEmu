@@ -25,6 +25,8 @@ set(SRC_BATTLEGROUNDS
 
 source_group(Battlegrounds FILES ${SRC_BATTLEGROUNDS})
 
+set(PCH_HEADERS PCH/BattlegroundsPCH.hpp)
+
 set(SRC_BGS
     ${SRC_AlteracValley}
     ${SRC_ArathiBasin}
@@ -59,7 +61,9 @@ add_library(${PROJECT_NAME} SHARED ${SRC_BGS})
 
 target_link_libraries(${PROJECT_NAME} world)
 
-
+if(USE_PCH)
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${ASCEMU_SCRIPTLIB_PATH} LIBRARY DESTINATION ${ASCEMU_SCRIPTLIB_PATH})
 unset(sources)

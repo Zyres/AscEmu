@@ -7,6 +7,8 @@ endif()
 
 project(MapScripts CXX)
 
+set(PCH_HEADERS PCH/MapScriptsPCH.hpp)
+
 include(EasternKingdoms/AlteracValley/CMakeLists.txt)
 include(EasternKingdoms/BlackrockMountain/BlackrockDepths/CMakeLists.txt)
 include(EasternKingdoms/BlackrockMountain/BlackrockSpire/CMakeLists.txt)
@@ -198,7 +200,9 @@ add_library(${PROJECT_NAME} SHARED ${sources})
 
 target_link_libraries(${PROJECT_NAME} world)
 
-
+if(USE_PCH)
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${ASCEMU_SCRIPTLIB_PATH} LIBRARY DESTINATION ${ASCEMU_SCRIPTLIB_PATH})
 unset(sources)

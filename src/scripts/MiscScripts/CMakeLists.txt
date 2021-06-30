@@ -8,6 +8,8 @@ endif()
 # set up our project name
 project(MiscScripts CXX)
 
+set(PCH_HEADERS PCH/MiscScriptsPCH.hpp)
+
 #sources -contains source files for our library.
 set(sources
     City_Dalaran.cpp
@@ -42,7 +44,9 @@ add_library(${PROJECT_NAME} SHARED ${sources} ${headers})
 
 target_link_libraries(${PROJECT_NAME} world)
 
-
+if(USE_PCH)
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${ASCEMU_SCRIPTLIB_PATH} LIBRARY DESTINATION ${ASCEMU_SCRIPTLIB_PATH})
 unset(sources)

@@ -8,6 +8,8 @@ endif()
 # set up our project name
 project(LuaEngine CXX)
 
+set(PCH_HEADERS PCH/LuaEnginePCH.hpp)
+
 #SRCS - contains the source files that compose this project.
 set(SRCS
     GameobjectFunctions.cpp
@@ -56,6 +58,10 @@ include_directories(
 
 add_library(${PROJECT_NAME} SHARED ${SRCS} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} world lualib)
+
+if(USE_PCH)
+	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+endif()
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${ASCEMU_SCRIPTLIB_PATH} LIBRARY DESTINATION ${ASCEMU_SCRIPTLIB_PATH})
 unset(sources)

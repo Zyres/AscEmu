@@ -89,7 +89,7 @@ elseif (NOT WIN32)
 endif()
 
 if(USE_PCH)
-	gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
+	#gen_cxx_pch(${PROJECT_NAME} ${PCH_HEADERS})
 endif()
 
 unset(sources)
