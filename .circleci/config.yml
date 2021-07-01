@@ -195,8 +195,4 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - "Classic"
-      - "TBC"
       - "WotLK"
-      - "Cata"
-      - "Mop"
