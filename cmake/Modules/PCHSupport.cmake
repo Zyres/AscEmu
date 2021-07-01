@@ -6,6 +6,7 @@ if (CMAKE_VERSION VERSION_LESS "3.16.0")
 	include(cotire)
 
 	function(GEN_CXX_PCH TARGET_LIST PCH_HEADERS)
+	  message(STATUS "Generate PCH for Project ${TARGET_LIST}")
 	  # iterate through targets
 	  foreach(TARGET_HEADER ${TARGET_LIST})
 		# unity builds disabled
@@ -21,6 +22,7 @@ if (CMAKE_VERSION VERSION_LESS "3.16.0")
 	endfunction(GEN_CXX_PCH)
 else()
 	function(GEN_CXX_PCH TARGET_LIST PCH_HEADERS)
+		message(STATUS "Generate PCH for Project ${TARGET_LIST}")
 		foreach(TARGET_HEADER ${TARGET_LIST})
 			target_precompile_headers(${TARGET_HEADER} PRIVATE ${PCH_HEADERS})
 		endforeach()
