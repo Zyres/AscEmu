@@ -10,8 +10,8 @@ jobs:
           name: Installing SUDO
           command: 'sudo apt-get update && sudo apt-get install -y && sudo rm -rf /var/lib/apt/lists/*'
       - run:
-          name: Installing GCC
-          command: 'sudo apt-get update && sudo apt-get install -y gcc-9 g++'
+          name: Installing Clang
+          command: 'sudo apt-get update && sudo apt-get install -y clang'
       - run:
           name: Install CMAKE
           command: 'sudo apt-get update && sudo apt-get install -y cmake'
